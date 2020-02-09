@@ -260,15 +260,17 @@ void moniV()
       }
     }
     int dis_num = 0;
-    for(int i = 0;i<18;i++)
+    for (int i = 0; i < 18; i++)
     {
-      if(discharge_stat[i] == false) dis_num++;
-      if(dis_num == 18){
+      if (discharge_stat[i] == false)
+        dis_num++;
+      if (dis_num == 18)
+      {
         Serial.println("All Discharge Finish!!");
         start_discharge = false;
       };
     }
-    
+
     /*if (num_of_finish == 18)
     {
       //Serial.print(num_of_finish);
@@ -287,7 +289,7 @@ void batery_charge_balance()
   conv_time = LTC6813_pollAdc();
   error = LTC6813_rdcv(SEL_ALL_REG, TOTAL_IC, BMS_IC); // Set to read back all cell voltage registers
   check_error(error);                                  //Check error to enable the function
-  
+
   for (int current_ic = 0; current_ic < TOTAL_IC; current_ic++)
   {
     for (int i = 0; i < BMS_IC[0].ic_reg.cell_channels; i++)
@@ -296,13 +298,15 @@ void batery_charge_balance()
       //Serial.println(balance_voltage);
       //Serial.println(BMS_IC[current_ic].cells.c_codes[i]);
       //Serial.println(avgV[current_ic]+1000);
-      if (BMS_IC[current_ic].cells.c_codes[i] > (avgV[current_ic]+1000) ){
-          wakeup_sleep(TOTAL_IC);
-          LTC6813_set_custom_discharge(i + 1, current_ic, TOTAL_IC, BMS_IC);
-          LTC6813_wrcfg(TOTAL_IC, BMS_IC);
-          LTC6813_wrcfgb(TOTAL_IC, BMS_IC);
-    }
-      else{
+      if (BMS_IC[current_ic].cells.c_codes[i] > (avgV[current_ic] + 1000))
+      {
+        wakeup_sleep(TOTAL_IC);
+        LTC6813_set_custom_discharge(i + 1, current_ic, TOTAL_IC, BMS_IC);
+        LTC6813_wrcfg(TOTAL_IC, BMS_IC);
+        LTC6813_wrcfgb(TOTAL_IC, BMS_IC);
+      }
+      else
+      {
         wakeup_sleep(TOTAL_IC);
         LTC6813_clear_custom2_discharge(i + 1, current_ic, TOTAL_IC, BMS_IC);
         LTC6813_wrcfg(TOTAL_IC, BMS_IC);
@@ -311,23 +315,27 @@ void batery_charge_balance()
     }
   }
 }
-int Maximum(){
+int Maximum()
+{
   for (int current_ic = 0; current_ic < TOTAL_IC; current_ic++)
   {
     for (int i = 0; i < BMS_IC[0].ic_reg.cell_channels; i++)
     {
-      if (BMS_IC[current_ic].cells.c_codes[i] > 37000 ){
+      if (BMS_IC[current_ic].cells.c_codes[i] > 37000)
+      {
         return 0;
       }
     }
   }
 }
-int Minimum(){
+int Minimum()
+{
   for (int current_ic = 0; current_ic < TOTAL_IC; current_ic++)
   {
     for (int i = 0; i < BMS_IC[0].ic_reg.cell_channels; i++)
     {
-      if (BMS_IC[current_ic].cells.c_codes[i] > 24000 ){
+      if (BMS_IC[current_ic].cells.c_codes[i] > 24000)
+      {
         return 0;
       }
     }
@@ -380,7 +388,7 @@ void run_command(uint32_t cmd)
   double vmax = 0;
 
   switch (cmd)
-  { 
+  {
   case 1: // Write and read Configuration Register
     wakeup_sleep(TOTAL_IC);
     LTC6813_wrcfg(TOTAL_IC, BMS_IC);  // Write into Configuration Register
@@ -845,7 +853,7 @@ void run_command(uint32_t cmd)
   case 'm': //prints menu
     print_menu();
     break;
-    
+
   case 50:
 
     break;
@@ -903,21 +911,21 @@ void run_command(uint32_t cmd)
     Serial.println("start discharge");
     break;
 
-  case 87:  //charge balance
+  case 87: //charge balance
     Serial.println("Ha Ha !!");
     wakeup_sleep(TOTAL_IC);
     LTC6813_adcv(ADC_CONVERSION_MODE, ADC_DCP, CELL_CH_TO_CONVERT);
     conv_time = LTC6813_pollAdc();
     error = LTC6813_rdcv(SEL_ALL_REG, TOTAL_IC, BMS_IC);
     check_error(error);
-  
+
     for (int current_ic = 0; current_ic < TOTAL_IC; current_ic++)
     {
       for (int i = 0; i < BMS_IC[current_ic].ic_reg.cell_channels; i++) //calculate the Battery's average voltage
       {
         avgV[current_ic] = BMS_IC[current_ic].cells.c_codes[i] + avgV[current_ic];
       }
-      avgV[current_ic] = avgV[current_ic]/18;
+      avgV[current_ic] = avgV[current_ic] / 18;
     }
     //Serial.println(avgV[0]);
     start_balance = true;
@@ -931,7 +939,7 @@ void run_command(uint32_t cmd)
     conv_time = LTC6813_pollAdc();
     error = LTC6813_rdcv(SEL_ALL_REG, TOTAL_IC, BMS_IC);
     check_error(error);
-    
+
     start_balance = false;
     Serial.println("Stop balance !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 
@@ -946,7 +954,7 @@ void run_command(uint32_t cmd)
       }
     }
     break;
-    
+
   case 89: //clear discharge of seleted cell of all ICs
     s_pin_read = select_s_pin();
     wakeup_sleep(TOTAL_IC);
@@ -956,9 +964,9 @@ void run_command(uint32_t cmd)
     //print_wrconfig();
     //print_wrconfigb();
     wakeup_idle(TOTAL_IC);
-    error = LTC6813_rdcfg(TOTAL_IC,BMS_IC);
+    error = LTC6813_rdcfg(TOTAL_IC, BMS_IC);
     check_error(error);
-    error = LTC6813_rdcfgb(TOTAL_IC,BMS_IC);
+    error = LTC6813_rdcfgb(TOTAL_IC, BMS_IC);
     check_error(error);
     //print_rxconfig();
     //print_rxconfigb();
@@ -974,9 +982,9 @@ void run_command(uint32_t cmd)
     //print_wrconfig();
     //print_wrconfigb();
     wakeup_idle(TOTAL_IC);
-    error = LTC6813_rdcfg(TOTAL_IC,BMS_IC);
+    error = LTC6813_rdcfg(TOTAL_IC, BMS_IC);
     check_error(error);
-    error = LTC6813_rdcfgb(TOTAL_IC,BMS_IC);
+    error = LTC6813_rdcfgb(TOTAL_IC, BMS_IC);
     check_error(error);
     //print_rxconfig();
     //print_rxconfigb();
@@ -987,24 +995,24 @@ void run_command(uint32_t cmd)
     LTC6813_adcv(ADC_CONVERSION_MODE, ADC_DCP, CELL_CH_TO_CONVERT);
     conv_time = LTC6813_pollAdc();
     print_conv_time(conv_time);
-    
+
     error = LTC6813_rdcv(SEL_ALL_REG, TOTAL_IC, BMS_IC); // Set to read back all cell voltage registers
     check_error(error);
     print_cells(DATALOG_DISABLED);
-    
+
     for (int i = 0; i < BMS_IC[0].ic_reg.cell_channels; i++)
     {
       vmin > BMS_IC[0].cells.c_codes[i] * 0.0001 ? vmin = BMS_IC[0].cells.c_codes[i] * 0.0001 : 1;
       vmax < BMS_IC[0].cells.c_codes[i] * 0.0001 ? vmax = BMS_IC[0].cells.c_codes[i] * 0.0001 : 1;
     }
     Serial.print("min : ");
-    Serial.print(vmin,4);
+    Serial.print(vmin, 4);
     Serial.print("  max : ");
-    Serial.println(vmax,4);
+    Serial.println(vmax, 4);
     break;
 
-    case 92:
-      Serial.println("test");
+  case 92:
+    Serial.println("test");
     /*double sum = 0;
     double avg = 0;
 
