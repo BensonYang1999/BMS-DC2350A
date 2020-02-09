@@ -266,7 +266,7 @@ void moniV()
         dis_num++;
       if (dis_num == 18)
       {
-        Serial.println("All Discharge Finish!!");
+        Serial.println(F("All Discharge Finish!!"));
         start_discharge = false;
       };
     }
@@ -854,10 +854,6 @@ void run_command(uint32_t cmd)
     print_menu();
     break;
 
-  case 50:
-
-    break;
-
   case 86: //start discharge to the lowest voltage of all cells and ICs
     wakeup_sleep(TOTAL_IC);
     LTC6813_adcv(ADC_CONVERSION_MODE, ADC_DCP, CELL_CH_TO_CONVERT);
@@ -869,17 +865,17 @@ void run_command(uint32_t cmd)
     {
       for (int i = 0; i < BMS_IC[current_ic].ic_reg.cell_channels; i++) //calculate the Battery's minimal voltage
       {
-        Serial.print(" C");
+        Serial.print(F(" C"));
         Serial.print(i + 1, DEC);
-        Serial.print(":");
+        Serial.print(F(":"));
         Serial.print(BMS_IC[current_ic].cells.c_codes[i] * 0.0001, 4);
-        Serial.print(",");
+        Serial.print(F(","));
         minV[current_ic] > BMS_IC[current_ic].cells.c_codes[i] * 0.0001 ? minV[current_ic] = BMS_IC[current_ic].cells.c_codes[i] * 0.0001 : 1;
       }
       Serial.println();
-      Serial.print("Minimal Voltage of IC ");
+      Serial.print(F("Minimal Voltage of IC "));
       Serial.print(current_ic);
-      Serial.print(" is : ");
+      Serial.print(F(" is : "));
       Serial.println(minV[current_ic], 4);
     }
 
@@ -908,11 +904,11 @@ void run_command(uint32_t cmd)
     }
 
     start_discharge = true;
-    Serial.println("start discharge");
+    Serial.println(F("start discharge"));
     break;
 
   case 87: //charge balance
-    Serial.println("Ha Ha !!");
+    Serial.println(F("Ha Ha !!"));
     wakeup_sleep(TOTAL_IC);
     LTC6813_adcv(ADC_CONVERSION_MODE, ADC_DCP, CELL_CH_TO_CONVERT);
     conv_time = LTC6813_pollAdc();
@@ -929,11 +925,11 @@ void run_command(uint32_t cmd)
     }
     //Serial.println(avgV[0]);
     start_balance = true;
-    Serial.println("start balance !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    Serial.println(F("start balance !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"));
     break;
 
   case 88:
-    Serial.println("Stop !!");
+    Serial.println(F("Stop !!"));
     wakeup_sleep(TOTAL_IC);
     LTC6813_adcv(ADC_CONVERSION_MODE, ADC_DCP, CELL_CH_TO_CONVERT);
     conv_time = LTC6813_pollAdc();
@@ -941,7 +937,7 @@ void run_command(uint32_t cmd)
     check_error(error);
 
     start_balance = false;
-    Serial.println("Stop balance !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    Serial.println(F("Stop balance !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"));
 
     for (int current_ic = 0; current_ic < TOTAL_IC; current_ic++)
     {
@@ -990,7 +986,7 @@ void run_command(uint32_t cmd)
     //print_rxconfigb();
     break;
 
-  case 91:
+  case 91: //calculate minimal and maxium
     wakeup_sleep(TOTAL_IC);
     LTC6813_adcv(ADC_CONVERSION_MODE, ADC_DCP, CELL_CH_TO_CONVERT);
     conv_time = LTC6813_pollAdc();
@@ -1005,14 +1001,13 @@ void run_command(uint32_t cmd)
       vmin > BMS_IC[0].cells.c_codes[i] * 0.0001 ? vmin = BMS_IC[0].cells.c_codes[i] * 0.0001 : 1;
       vmax < BMS_IC[0].cells.c_codes[i] * 0.0001 ? vmax = BMS_IC[0].cells.c_codes[i] * 0.0001 : 1;
     }
-    Serial.print("min : ");
+    Serial.print(F("min : "));
     Serial.print(vmin, 4);
-    Serial.print("  max : ");
+    Serial.print(F("  max : "));
     Serial.println(vmax, 4);
     break;
 
-  case 92:
-    Serial.println("test");
+  case 92: //old discharge
     /*double sum = 0;
     double avg = 0;
 
@@ -1056,30 +1051,7 @@ void run_command(uint32_t cmd)
 
     start_discharge = true;*/
     break;
-
-  case 70: //hightest and lowest
-    Serial.println("test");
-    /*wakeup_sleep(TOTAL_IC);
-    LTC6813_adcv(ADC_CONVERSION_MODE, ADC_DCP, CELL_CH_TO_CONVERT);
-    conv_time = LTC6813_pollAdc();
-    error = LTC6813_rdcv(SEL_ALL_REG, TOTAL_IC, BMS_IC); // Set to read back all cell voltage registers
-    check_error(error);
-    print_cells(DATALOG_DISABLED);
     
-    double vmin = 5;
-    double vmax = 0;
-    
-    for (int i = 0; i < BMS_IC[0].ic_reg.cell_channels; i++)
-    {
-      vmin > BMS_IC[0].cells.c_codes[i] * 0.0001 ? vmin = BMS_IC[0].cells.c_codes[i] * 0.0001 : 1;
-      vmax < BMS_IC[0].cells.c_codes[i] * 0.0001 ? vmax = BMS_IC[0].cells.c_codes[i] * 0.0001 : 1;
-    }
-    Serial.print("min : ");
-    Serial.print(vmin,4);
-    Serial.print("  max : ");
-    Serial.println(vmax,4);*/
-    break;
-
   default:
     char str_error[] = "Incorrect Option \n";
     serial_print_text(str_error);
@@ -1319,7 +1291,7 @@ void print_cells(uint8_t datalog_en)
     else
     {
 
-      Serial.print(" Cells, ");
+      Serial.print(F(" Cells, "));
       for (int i = 0; i < BMS_IC[0].ic_reg.cell_channels; i++)
       {
         Serial.print(BMS_IC[current_ic].cells.c_codes[i] * 0.0001, 4);
